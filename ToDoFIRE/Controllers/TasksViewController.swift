@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class TasksViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
@@ -27,7 +28,32 @@ class TasksViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
 
     @IBAction func addTapped(_ sender: UIBarButtonItem) {
+        let alertController = UIAlertController(title: "New Task", message: "Add new task", preferredStyle: .alert)
+        alertController.addTextField()
+        let save = UIAlertAction(title: "Save", style: .default) { _ in
+            
+            guard let textField = alertController.textFields?.first, textField.text != "" else { return }
+            
+            // let task
+            // taskRef
+            //
+            
+        }
+        
+        let cancel = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+        alertController.addAction(save)
+        alertController.addAction(cancel)
+        
+        present(alertController, animated: true, completion: nil)
+    }
     
+    @IBAction func signOutTapped(_ sender: UIBarButtonItem) {
+        do {
+            try Auth.auth().signOut()
+        } catch {
+            print(error.localizedDescription)
+        }
+        dismiss(animated: true, completion: nil)
     }
     
 }
