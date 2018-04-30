@@ -51,9 +51,12 @@ class TasksViewController: UIViewController, UITableViewDelegate, UITableViewDat
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         
         cell.backgroundColor = .clear
+        let task = tasks[indexPath.row]
+        let taskTitle = task.title
+        let isCompleted = task.completed
         cell.textLabel?.textColor = .white
-        let taskTitle = tasks[indexPath.row].title
         cell.textLabel?.text = taskTitle
+        toggleCompletion(cell, isCompleted: isCompleted)
         
         return cell
     }
@@ -62,6 +65,32 @@ class TasksViewController: UIViewController, UITableViewDelegate, UITableViewDat
         return tasks.count
     }
 
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let task = tasks[indexPath.row]
+            task.ref?.removeValue()
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let cell = tableView.cellForRow(at: indexPath) else { return }
+        let task = tasks[indexPath.row]
+        let isCompleted = !task.completed
+        
+        toggleCompletion(cell, isCompleted: isCompleted)
+        
+        task.ref?.updateChildValues(["completed": isCompleted])
+        
+    }
+    
+    func toggleCompletion(_ cell: UITableViewCell, isCompleted: Bool) {
+        cell.accessoryType = isCompleted ? .checkmark : .none
+    }
+    
     @IBAction func addTapped(_ sender: UIBarButtonItem) {
         let alertController = UIAlertController(title: "New Task", message: "Add new task", preferredStyle: .alert)
         alertController.addTextField()
